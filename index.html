@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Launcher</title>
+  <!-- Load Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #1e1e2f;
+      color: #f0f0f0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;   /* center horizontally */
+      align-items: center;       /* center vertically */
+    }
+    /* Wrapper holds navbar + grid together */
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 1150px;
+      max-height: calc(1150px + 60px); /* grid + navbar height */
+      box-sizing: border-box;
+    }
+    /* Navbar */
+    .navbar {
+      background: #333;
+      padding: 6px;
+      height: 50px; /* consistent height */
+      box-sizing: border-box;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .navbar form {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .navbar input[type="text"] {
+      flex: 1;
+      background: #444;     /* dark gray input */
+      color: #fff;          /* white text */
+      max-width: 475px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    .navbar button {
+      padding: 8px 12px;
+      background: #4dabf7;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+      margin-left: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    /* Grid */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+      width: 100%;
+      flex: 1;
+    }
+    .section {
+      display: flex;
+      flex-direction: column;
+      border-radius: 20px;
+      padding: 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .section h1 {
+      text-align: center;
+      font-size: 1.5em;
+      margin: 5px 0 10px;
+      flex-shrink: 0;
+    }
+    /* Different background colors for each quadrant */
+    .dashboards { background: #2b2b40; }
+    .services  { background: #303045; }
+    .media     { background: #35354a; }
+    .links     { background: #3a3a4f; }
+    .grid {
+      flex: 1;
+      display: grid;
+      gap: 10px;
+      align-content: start;      /* keep items packed at the top */
+      justify-content: center;    /* center grid horizontally */
+      grid-auto-flow: row;
+    }
+    /* Cap the grid to max 4 columns */
+    @media (min-width: 0px) {
+      .grid { grid-template-columns: repeat(1, 1fr); }
+    }
+    @media (min-width: 350px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 700px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 800px) {
+      .grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 1000px) {
+      .grid { grid-template-columns: repeat(5, 1fr); }
+    }
+    /*@media (min-width: 1200px) {*/
+    /*  .grid { grid-template-columns: repeat(6, 1fr); }*/
+    /*}*/
+    .card {
+      background: #44445a;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform 0.2s, background 0.2s;
+      aspect-ratio: 1 / 1;       /* keep square */
+      margin: 5px;
+      min-width: 80px;           /* control min size */
+      max-width: 100px;          /* control max size */
+      overflow: hidden;          /* stop text overflow */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .card a {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #4dabf7;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.75em;          /* slightly smaller font */
+      text-align: center;
+      width: 100%;               /* fill the card */
+      height: 100%;
+    }
+    .card span {
+      margin-top: 3px;               /* space between icon and text */
+      white-space: nowrap;           /* prevent wrapping */
+      overflow: hidden;
+      max-width: 99%;                /* clip long names */
+    }
+    .card i {
+      font-size: 2em;
+      margin-bottom: 8px;
+    }
+    .card img {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 6px;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      background: #55556a;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+<!-- Navbar with search -->
+<div class="navbar">
+  <form id="searchForm">
+    <input type="text" id="searchInput" placeholder="Search DuckDuckGo or enter URL..." autofocus>
+    <button type="submit"><i class="fa fa-search"></i></button>
+  </form>
+</div>
+<div class="container">
+  <!-- Quadrant 1: Dashboards -->
+  <div class="section dashboards">
+    <h1>Dashboards</h1>
+    <div class="grid">
+      <div class="card">
+        <a href="http://192.168.1.27:3000">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Grafana</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://192.168.1.27:9090">
+          <i class="fa-solid fa-database"></i>
+          <span>Prometheus</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://xo.server.lan">
+          <i class="fa-solid fa-server"></i>
+          <span>Xen Orchestra</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://192.168.1.20">
+          <i class="fa-solid fa-network-wired"></i>
+          <span>XCP-NG</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://192.168.15.1/cgi-bin/sophia_index.cgi">
+          <i class="fa-solid fa-wifi"></i>
+          <span>VIVO</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Quadrant 2: Services -->
+  <div class="section services">
+    <h1>Services</h1>
+    <div class="grid">
+      <div class="card">
+        <a href="http://192.168.1.22:8089/admin/">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Pi-Hole</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="https://vaultwarden.server.lan:8001/#/vault">
+          <i class="fa-solid fa-vault"></i>
+          <span>Vaultwarden</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://copyparty.local:568">
+          <i class="fa-solid fa-folder"></i>
+          <span>Copyparty</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://192.168.1.24:9117/UI/Dashboard">
+          <i class="fa-solid fa-shirt"></i>
+          <span>Jackett</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://media.server.lan:9091/transmission/web/">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+          <span>Transmission</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Quadrant 3: Media -->
+  <div class="section media">
+    <h1>Media</h1>
+    <div class="grid">
+      <div class="card">
+        <a href="http://192.168.1.24/ompd">
+          <i class="fa-solid fa-music"></i>
+          <span>O!MPD</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="https://media.server.lan/soulseek/searches">
+          <i class="fa-solid fa-download"></i>
+          <span>Soulseek</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://192.168.1.24:8686/lidarr/">
+          <i class="fa-solid fa-compact-disc"></i>
+          <span>Lidarr</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://192.168.1.24:8200/">
+          <i class="fa-solid fa-radio"></i>
+          <span>MiniDLNA</span>
+        </a>
+      </div>
+      <div class="card">
+        <a href="http://media.server.lan:4533">
+          <i class="fa-solid fa-headphones"></i>
+          <span>Navidrome</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Quadrant 4: External Links -->
+  <div class="section links">
+  <h1>Favorites</h1>
+  <div class="grid">
+    <div class="card">
+      <a href="https://youtube.com">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=youtube.com" alt="YouTube">
+        <span>YouTube</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://github.com">
+        <img src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub" width="64" height="64">
+        <span>GitHub</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://g1.globo.com">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=g1.globo.com" alt="G1">
+        <span>G1</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://ge.globo.com">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=ge.globo.com" alt=>
+        <span>Ge</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://bsky.app">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=bsky.app" alt="BlueSky">
+        <span>BlueSky</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://www.gmail.com">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=gmail.com" alt="Gmail">
+        <span>Gmail</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://web.whatsapp.com">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=whatsapp.com" alt="WhatsApp">
+        <span>WhatsApp</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://netflix.com">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=netflix.com" a>
+        <span>Netflix</span>
+      </a>
+    </div>
+    <div class="card">
+      <a href="https://www.brasiltvweb.net/">
+        <img src="https://www.google.com/s2/favicons?sz=64&domain=gov.br" a>
+        <span>Brasil TV</span>
+      </a>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<script>
+  document.getElementById("searchForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // stop default form behavior
+    let query = document.getElementById("searchInput").value.trim();
+    // Simple check if it's a URL
+    if (query.match(/^https?:\/\//i)) {
+      // Already a full URL
+      window.location.href = query;
+    } else if (query.match(/\.[a-z]{2,}$/i)) {
+      // Looks like a domain, add https:// if missing
+      window.location.href = "https://" + query;
+    } else {
+      // Otherwise, search on DuckDuckGo
+      window.location.href = "https://duckduckgo.com/?q=" + encodeURIComponent(query);
+    }
+  });
+</script>
+</body>
+  <!-- Tarso Galvão  -  Out 2025  -  https://github.com/surtarso/single-file-new-tab-launcher  -->
+</html>
